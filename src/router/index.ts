@@ -1,29 +1,49 @@
 import Vue from 'vue';
-import VueRouter, { RouteConfig } from 'vue-router';
-import Home from '../views/Home.vue';
+import Router from 'vue-router';
 
-Vue.use(VueRouter);
+const Home = () => import(/* webpackChunkName: "group-news" */ '@/components/home.vue');
 
-const routes: RouteConfig[] = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home,
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
-  },
-];
+Vue.use(Router);
 
-const router = new VueRouter({
+const router = new Router({
+  base: '/',
   mode: 'history',
-  base: process.env.BASE_URL,
-  routes,
+  scrollBehavior() {
+    return { x: 0, y: 0 };
+  },
+  routes: [
+    {
+      path: '/',
+      redirect: '/home',
+    },
+    {
+      path: '/home',
+      component: Home,
+      name: 'Home',
+    },
+  ],
 });
+
+// router.beforeEach((to, from, next) => {
+//   try {
+//     if (to.matched[to.matched.length - 1].meta.requiresAuth === false) {
+//       if (localStorage.getItem('ACCESS_TOKEN')) {
+//         next({path: '/news-feed'})
+//       } else {
+//         next()
+//       }
+//     } else if (to.matched[to.matched.length - 1].meta.requiresAuth === true) {
+//       if (localStorage.getItem('ACCESS_TOKEN')) {
+//         next()
+//       } else {
+//         next({path: '/news-feed'})
+//       }
+//     } else {
+//       next(true)
+//     }
+//   } catch (e) {
+//     next()
+//   }
+// })
 
 export default router;
